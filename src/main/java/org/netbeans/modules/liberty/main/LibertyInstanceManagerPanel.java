@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.netbeans.modules.liberty.main;
 
 import java.io.File;
@@ -29,6 +30,8 @@ import org.openide.filesystems.FileUtil;
  */
 public class LibertyInstanceManagerPanel extends javax.swing.JPanel {
 
+    private String userDir;
+    
     public LibertyInstanceManagerPanel() {
         initComponents();
     }
@@ -36,14 +39,14 @@ public class LibertyInstanceManagerPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-  
+
         locationLabel = new javax.swing.JLabel();
         installationLocation = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(LibertyInstanceManagerPanel.class, "LibertyInstanceManagerPanel.locationLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(locationLabel, org.openide.util.NbBundle.getMessage(LibertyInstanceManagerPanel.class, "LibertyWizardComponent.locationLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(LibertyInstanceManagerPanel.class, "LibertyInstanceManagerPanel.browseButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(browseButton, org.openide.util.NbBundle.getMessage(LibertyInstanceManagerPanel.class, "LibertyWizardComponent.browseButton.text")); // NOI18N
         browseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseButtonActionPerformed(evt);
@@ -58,7 +61,7 @@ public class LibertyInstanceManagerPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(installationLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                        .addComponent(installationLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(browseButton))
                     .addGroup(layout.createSequentialGroup()
@@ -77,8 +80,6 @@ public class LibertyInstanceManagerPanel extends javax.swing.JPanel {
                     .addComponent(browseButton))
                 .addContainerGap(240, Short.MAX_VALUE))
         );
-
-        
     }// </editor-fold>//GEN-END:initComponents
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
@@ -91,10 +92,15 @@ public class LibertyInstanceManagerPanel extends javax.swing.JPanel {
         //Result will be null if the user clicked cancel or closed the dialog w/o OK
         if (toAdd != null) {
             FileObject fo = FileUtil.toFileObject(toAdd);
-            installationLocation.setText(fo.getPath());
+            userDir = fo.getPath();
+            installationLocation.setText(userDir);
         }
     }//GEN-LAST:event_browseButtonActionPerformed
 
+    public String getUserDir() {
+        return userDir;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JTextField installationLocation;
