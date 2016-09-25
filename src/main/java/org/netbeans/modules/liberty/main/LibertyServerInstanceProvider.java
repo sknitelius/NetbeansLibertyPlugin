@@ -16,25 +16,39 @@
 package org.netbeans.modules.liberty.main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.server.ServerInstance;
+import org.netbeans.spi.server.ServerInstanceFactory;
 import org.netbeans.spi.server.ServerInstanceProvider;
+import org.openide.util.ChangeSupport;
 
 /**
  * Provides instance in Services window. Registered in layer.xml file.
  *
  * @author gwieleng
  */
-public class LibertyInstanceProvider implements ServerInstanceProvider {
+public class LibertyServerInstanceProvider implements ServerInstanceProvider, ChangeListener {
 
+    private ChangeSupport listeners;
+    private List<ServerInstance> instances;
+    private static LibertyServerInstanceProvider instance;
+    
     private static final String TEST_SERVER_NAME = "WebSphere Liberty";
 
     private static final String TEST_RUNTIME_LOC = "C:\\myLibertyInstallPath\\wlp";
 
+    private LibertyServerInstanceProvider() {
+        listeners = new ChangeSupport(this);
+        instances = Collections.<ServerInstance>emptyList();
+        LibertyInstanceManager.getDefault().addChangeListener(this);
+        refreshServers();
+    }
+    
     @Override
     public List<ServerInstance> getInstances() {
-        List<ServerInstance> instances = new ArrayList<ServerInstance>();
 
         //TODO: Listen to registration entries created in user directory
         //using FileChangeListener and refresh here
@@ -48,13 +62,32 @@ public class LibertyInstanceProvider implements ServerInstanceProvider {
 
         return instances;
     }
+    
+    private void refreshServers() {
+        List<ServerInstance> servers = new ArrayList<ServerInstance>();
+        for (LibertyInstance ai : LibertyInstanceManager.getDefault().getInstances()) {
+            ServerInstance si = ServerInstanceFactory.createServerInstance(new LibertyServerInstanceImplementation(this, ai));
+//            ai.setServerInstance(si);
+            servers.add(si);
+        }
+        this.instances = servers;
+        listeners.fireChange();
+    }
 
     @Override
     public void addChangeListener(ChangeListener listener) {
+        listeners.addChangeListener(listener);
     }
 
     @Override
     public void removeChangeListener(ChangeListener listener) {
+        listeners.removeChangeListener(listener);
+    }
+    
+    
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        refreshServers();
     }
 
 }
